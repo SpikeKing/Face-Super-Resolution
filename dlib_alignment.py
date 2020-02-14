@@ -3,8 +3,7 @@ import cv2
 from skimage import transform as trans
 import dlib
 
-dlib_detector = dlib.get_frontal_face_detector()
-sp = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
+
 
 
 def face_recover(img, M, ori_img):
@@ -63,19 +62,3 @@ def dlib_alignment(img, landmarks, padding=0.25, size=128, moving=0.0):
 
     return warped, M
 
-
-def dlib_detect_face(img, image_size=(128, 128), padding=0.25, moving=0.0):
-    dets = dlib_detector(img, 0)
-    if dets:
-        if isinstance(dets, dlib.rectangles):
-            det = max(dets, key=lambda d: d.area())
-        else:
-            det = max(dets, key=lambda d: d.rect.area())
-            det = det.rect
-        face = sp(img, det)
-        landmarks = shape_to_np(face)
-        img_aligned, M = dlib_alignment(img, landmarks, size=image_size[0], padding=padding, moving=moving)
-
-        return img_aligned, M
-    else:
-        return None
