@@ -5,7 +5,6 @@ Copyright (c) 2019. All rights reserved.
 Created by C. L. Wang on 2020/2/14
 """
 import argparse
-import dlib
 import os
 
 import numpy as np
@@ -14,10 +13,10 @@ import torchvision.transforms as transforms
 from PIL import Image
 
 import utils
-from dlib_alignment import face_recover, shape_to_np, dlib_alignment
+from dlib_alignment import face_recover, dlib_detect_face
 from models.SRGAN_model import SRGANModel
-from root_dir import DATA_DIR
 from my_utils.project_utils import mkdir_if_not_exist, traverse_dir_files
+from root_dir import DATA_DIR
 
 
 class ImgGenerator(object):
@@ -28,16 +27,15 @@ class ImgGenerator(object):
     def __init__(self):
         # self.pretrain_model_G = os.path.join(DATA_DIR, 'models', '90000_G.pth')
         self.pretrain_model_G = os.path.join(DATA_DIR, 'models', '200000_G.pth')
-        self.predictor_path = os.path.join(DATA_DIR, 'models', 'shape_predictor_68_face_landmarks.dat')
 
         self.transform = self.get_transforms()
-        self.sr_model, self.dlib_detector, self.shape_predictor = self.init_model()
+        self.sr_model = self.init_model()
 
     def sr_forward(self, img, padding=0.5, moving=0.1):
         """
         超分辨率，图像
         """
-        img_aligned, M = self.dlib_detect_face(img, padding=padding, image_size=(128, 128), moving=moving)
+        img_aligned, M = dlib_detect_face(img, padding=padding, image_size=(128, 128), moving=moving)
         input_img = torch.unsqueeze(self.transform(Image.fromarray(img_aligned)), 0)
         self.sr_model.var_L = input_img.to(self.sr_model.device)
         self.sr_model.test()
@@ -53,27 +51,9 @@ class ImgGenerator(object):
         """
         sr_model = SRGANModel(self.get_FaceSR_opt(), is_train=False)
         sr_model.load()
+        print('[Info] device: {}'.format(sr_model.device))
 
-        dlib_detector = dlib.get_frontal_face_detector()
-        shape_predictor = dlib.shape_predictor(self.predictor_path)
-
-        return sr_model, dlib_detector, shape_predictor
-
-    def dlib_detect_face(self, img, image_size=(128, 128), padding=0.25, moving=0.0):
-        dets = self.dlib_detector(img, 0)
-        if dets:
-            if isinstance(dets, dlib.rectangles):
-                det = max(dets, key=lambda d: d.area())
-            else:
-                det = max(dets, key=lambda d: d.rect.area())
-                det = det.rect
-            face = self.shape_predictor(img, det)
-            landmarks = shape_to_np(face)
-            img_aligned, M = dlib_alignment(img, landmarks, size=image_size[0], padding=padding, moving=moving)
-
-            return img_aligned, M
-        else:
-            return None
+        return sr_model
 
     def get_transforms(self):
         """
@@ -140,7 +120,7 @@ class ImgGenerator(object):
         return args
 
 
-def generate_img(img_path):
+def generate_img(img_path, out_path):
     print('[Info] 图像路径: {}'.format(img_path))
     # 图像
     img = utils.read_cv2_img(img_path)
@@ -155,18 +135,48 @@ def generate_img(img_path):
     rec_img = ig.sr_forward(img=img)  # 超分辨率图像
 
     # 输出图像
-    out_path = os.path.join(outs_dir, '{}.output.2.jpg'.format(img_name))
+    # out_path = os.path.join(outs_dir, '{}.output.2.jpg'.format(img_name))
     utils.save_image(rec_img, out_path)
-    print('[Info] 输出路径: {}'.format(out_path))
+    # print('[Info] 输出路径: {}'.format(out_path))
+
+
+def generate_img_dir(img_dir, out_dir):
+    """
+    处理视频文件夹，输出至文件夹
+    """
+    # img_dir = os.path.join(DATA_DIR, 'imgs')
+    # out_dir = os.path.join(DATA_DIR, 'outs')
+    mkdir_if_not_exist(out_dir)
+    paths_list, names_list = traverse_dir_files(img_dir)
+
+    ig = ImgGenerator()
+
+    count = 0
+    for path, name in zip(paths_list, names_list):
+        # img_path = os.path.join(DATA_DIR, 'imgs', 'input_4.jpg')
+        sr_name = name.split('.')[0] + '.sr.jpg'
+        out_path = os.path.join(out_dir, sr_name)
+
+        img = utils.read_cv2_img(path)
+        rec_img = ig.sr_forward(img=img)  # 超分辨率图像
+        utils.save_image(rec_img, out_path)
+
+        count += 1
+        if count % 100 == 0:
+            print('[Info] count {}'.format(count))
+
+    print('[Info] 视频文件处理完成!')
+    print('[Info] 输出文件夹: {}'.format(out_dir))
+
+
+def generate_img_dir_test():
+    img_dir = os.path.join(DATA_DIR, 'imgs')
+    out_dir = os.path.join(DATA_DIR, 'outs')
+    generate_img_dir(img_dir, out_dir)
 
 
 def main():
-    img_dir = os.path.join(DATA_DIR, 'imgs')
-    paths_list, names_list = traverse_dir_files(img_dir)
-    for path, name in zip(paths_list, names_list):
-        # img_path = os.path.join(DATA_DIR, 'imgs', 'input_4.jpg')
-        generate_img(path)
-        print('-' * 50)
+    generate_img_dir_test()
 
 
 if __name__ == '__main__':
