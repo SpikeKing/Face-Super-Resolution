@@ -66,7 +66,7 @@ class ImgGenerator(object):
 
     def get_FaceSR_opt(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument('--gpu_ids', type=str, default=None)
+        parser.add_argument('--gpu_ids', type=str, default="0")
         parser.add_argument('--batch_size', type=int, default=32)
         parser.add_argument('--lr_G', type=float, default=1e-4)
         parser.add_argument('--weight_decay_G', type=float, default=0)
