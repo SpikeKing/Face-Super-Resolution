@@ -153,6 +153,7 @@ def generate_img_dir(img_dir, out_dir):
 
     count = 0
     for path, name in zip(paths_list, names_list):
+        print('[Info] 图像路径: {}'.format(path))
         # img_path = os.path.join(DATA_DIR, 'imgs', 'input_4.jpg')
         sr_name = name.split('.')[0] + '.jpg'
         out_path = os.path.join(out_dir, sr_name)
