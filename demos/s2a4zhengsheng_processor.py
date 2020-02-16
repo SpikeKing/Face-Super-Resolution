@@ -6,8 +6,14 @@ Created by C. L. Wang on 2020/2/16
 """
 
 import os
+import sys
 import shutil
 import random
+
+p = os.path.dirname((os.path.dirname(os.path.abspath(__file__))))
+
+if p not in sys.path:
+    sys.path.append(p)
 
 from my_utils.project_utils import traverse_dir_files, mkdir_if_not_exist
 
