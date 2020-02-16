@@ -158,9 +158,13 @@ def generate_img_dir(img_dir, out_dir):
         sr_name = name.split('.')[0] + '.jpg'
         out_path = os.path.join(out_dir, sr_name)
 
-        img = utils.read_cv2_img(path)
-        rec_img = ig.sr_forward(img=img)  # 超分辨率图像
-        utils.save_image(rec_img, out_path)
+        try:
+            img = utils.read_cv2_img(path)
+            rec_img = ig.sr_forward(img=img)  # 超分辨率图像
+            utils.save_image(rec_img, out_path)
+        except Exception as e:
+            print('[Info] 异常: {}'.format(e))
+            print('[Info] 图像: {}'.format(path))
 
         count += 1
         if count % 100 == 0:
