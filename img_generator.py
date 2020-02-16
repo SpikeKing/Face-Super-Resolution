@@ -154,7 +154,7 @@ def generate_img_dir(img_dir, out_dir):
     count = 0
     for path, name in zip(paths_list, names_list):
         # img_path = os.path.join(DATA_DIR, 'imgs', 'input_4.jpg')
-        sr_name = name.split('.')[0] + '.sr.jpg'
+        sr_name = name.split('.')[0] + '.jpg'
         out_path = os.path.join(out_dir, sr_name)
 
         img = utils.read_cv2_img(path)
@@ -170,8 +170,10 @@ def generate_img_dir(img_dir, out_dir):
 
 
 def generate_img_dir_test():
-    img_dir = os.path.join(DATA_DIR, 'imgs')
-    out_dir = os.path.join(DATA_DIR, 'outs')
+    # img_dir = os.path.join(DATA_DIR, 'imgs')
+    # out_dir = os.path.join(DATA_DIR, 'outs')
+    img_dir = os.path.join('/mydata/workspace/datasets/s2a4zhengsheng/testA')
+    out_dir = os.path.join('/mydata/workspace/datasets/s2a4zhengsheng/testA_sr')
     generate_img_dir(img_dir, out_dir)
 
 
