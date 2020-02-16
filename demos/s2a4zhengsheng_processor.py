@@ -22,20 +22,22 @@ def process_s2azhengsheng():
     """
     处理s2azhengsheng数据集
     """
-    trainA_dir = "/Users/wangchenlong/workspace/Face-Super-Resolution/data/s2a4zhengsheng/trainA"
-    trainB_dir = "/Users/wangchenlong/workspace/Face-Super-Resolution/data/s2a4zhengsheng/trainB"
-    testA_dir = "/Users/wangchenlong/workspace/Face-Super-Resolution/data/s2a4zhengsheng/testA"
-    testB_dir = "/Users/wangchenlong/workspace/Face-Super-Resolution/data/s2a4zhengsheng/testB"
+    trainA_dir = "/mydata/workspace/datasets/s2a4zhengsheng/trainA_sr"
+    trainB_dir = "/mydata/workspace/datasets/s2a4zhengsheng/trainB"
+    testA_dir = "/mydata/workspace/datasets/s2a4zhengsheng/testA_sr"
+    testB_dir = "/mydata/workspace/datasets/s2a4zhengsheng/testB"
 
-    trainA_out_dir = "/Users/wangchenlong/workspace/Face-Super-Resolution/data/s2a4zhengsheng_sr/trainA"
-    trainB_out_dir = "/Users/wangchenlong/workspace/Face-Super-Resolution/data/s2a4zhengsheng_sr/trainB"
-    testA_out_dir = "/Users/wangchenlong/workspace/Face-Super-Resolution/data/s2a4zhengsheng_sr/testA"
-    testB_out_dir = "/Users/wangchenlong/workspace/Face-Super-Resolution/data/s2a4zhengsheng_sr/testB"
+    trainA_out_dir = "/mydata/workspace/datasets/s2a4zhengsheng_sr/trainA"
+    trainB_out_dir = "/mydata/workspace/datasets/s2a4zhengsheng_sr/trainB"
+    testA_out_dir = "/mydata/workspace/datasets/s2a4zhengsheng_sr/testA"
+    testB_out_dir = "/mydata/workspace/datasets/s2a4zhengsheng_sr/testB"
 
-    process_dir(trainA_dir, trainA_out_dir, 15, "p")
-    process_dir(trainB_dir, trainB_out_dir, 15, "c")
-    process_dir(testA_dir, testA_out_dir, 5, "p")
-    process_dir(testB_dir, testB_out_dir, 5, "c")
+    process_dir(trainA_dir, trainA_out_dir, 70000, "p")
+    process_dir(trainB_dir, trainB_out_dir, 70000, "c")
+    process_dir(testA_dir, testA_out_dir, 4500, "p")
+    process_dir(testB_dir, testB_out_dir, 4500, "c")
+
+    print('[Info] 全部处理完成!')
 
 
 def process_dir(src_dir, dst_dir, num, type):
@@ -46,6 +48,8 @@ def process_dir(src_dir, dst_dir, num, type):
     :param num: 数量
     :return: 复制
     """
+    print('[Info] 源文件夹: {}'.format(src_dir))
+    print('[Info] 目标文件夹: {}'.format(dst_dir))
     mkdir_if_not_exist(dst_dir)  # 创建文件夹
 
     random.seed(47)
@@ -58,6 +62,8 @@ def process_dir(src_dir, dst_dir, num, type):
 
         out_path = os.path.join(dst_dir, "{:05d}.{}.jpg".format(i + 1, type))
         shutil.copy(path, out_path)
+
+    print('[Info] 处理完成!')
 
 
 def main():
