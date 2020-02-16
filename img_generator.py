@@ -177,8 +177,8 @@ def generate_img_dir(img_dir, out_dir):
 def generate_img_dir_test():
     # img_dir = os.path.join(DATA_DIR, 'imgs')
     # out_dir = os.path.join(DATA_DIR, 'outs')
-    img_dir = os.path.join('/mydata/workspace/datasets/s2a4zhengsheng/testA')
-    out_dir = os.path.join('/mydata/workspace/datasets/s2a4zhengsheng/testA_sr')
+    img_dir = os.path.join('/mydata/workspace/datasets/s2a4zhengsheng/trainA')
+    out_dir = os.path.join('/mydata/workspace/datasets/s2a4zhengsheng/trainA_sr')
     generate_img_dir(img_dir, out_dir)
 
 
